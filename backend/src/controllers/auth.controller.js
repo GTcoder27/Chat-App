@@ -19,7 +19,7 @@ export const signup = async (req,res)=>{
         }
         const user = await User.findOne({email});
         if(user) return res.status(400).json({message:"Email already exist"});
-        console.log(fullname, email);
+        // console.log(fullname, email);
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password,salt);
         const newUser = new User({
@@ -27,7 +27,7 @@ export const signup = async (req,res)=>{
             email,
             password:hashedPassword,
         });
-        console.log(newUser);
+        // console.log(newUser);
 
         if(newUser){
             generateToken(newUser._id,res);
@@ -71,7 +71,7 @@ export const login = async (req,res)=>{
             profilePic: user.pic,
         });
     } catch(err){
-        console.log("Error in login credentials",error.message);
+        console.log("Error in login credentials",err.message);
         res.status(500).json({message:"Internal Server Error"});
     }
 };
@@ -81,14 +81,14 @@ export const logout = (req,res)=>{
         res.cookie("jwt","",{maxAge:0});
         res.status(200).json({message:"Logged out successfully"});
     }catch(err){
-        console.log("error in logout controller ",error.message);
+        console.log("error in logout controller ",err.message);
         res.send(500).json({message:"Internal Server Error"});
     }
 };
 
 export const updateProfile = async (req, res) => {
     try{
-        console.log(req.body);
+        // console.log(req.body);
         const {profilePic} = req.body;
         const userId = req.user._id;
         if(!profilePic){
@@ -109,7 +109,7 @@ export const updateProfile = async (req, res) => {
 // finds the user which is logged in 
 export const checkAuth = (req, res) => {
     try{
-        console.log(req.user);
+        // console.log(req.user);
         res.status(200).json(req.user);
     }catch(error){
         console.log(error.message);

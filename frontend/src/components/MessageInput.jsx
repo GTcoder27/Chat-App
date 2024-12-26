@@ -1,13 +1,15 @@
 import { useRef, useState } from "react";
+// import { useChatStore } from "../store/useChatStore";
 import { useChatStore } from "../store/useChatStore";
 import { Image, Send, X } from "lucide-react";
 import toast from "react-hot-toast";
+import { Loader } from "lucide-react";
 
 const MessageInput = () => {
   const [text, setText] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
-  const { sendMessage } = useChatStore();
+  const { sendMessage,isSendingMessage } = useChatStore();
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -59,11 +61,11 @@ const MessageInput = () => {
             />
             <button
               onClick={removeImage}
-              className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-base-300
+              className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-500 text-white
               flex items-center justify-center"
-              type="button"
+              type="button" 
             >
-              <X className="size-3" />
+              &times;
             </button>
           </div>
         </div>
@@ -98,9 +100,16 @@ const MessageInput = () => {
         <button
           type="submit"
           className="btn btn- btn-circle"
-          disabled={!text.trim() && !imagePreview}
+          disabled={!text.trim() && !imagePreview }
         >
-          <Send size={22} />
+          {isSendingMessage ? (
+                <>
+                  <Loader/>
+                </>
+              ) : (
+                <Send size={22} />
+              )}
+          
         </button>
       </form>
     </div>
