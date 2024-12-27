@@ -17,9 +17,10 @@ export const signup = async (req,res)=>{
         if(password.length < 6){
             return res.status(400).json({message:"password must be at least 6 characters"});      
         }
-        const user = await User.findOne({email});
+        // console.log("finding");
+        const user = await User.findOne({ email });
+
         if(user) return res.status(400).json({message:"Email already exist"});
-        // console.log(fullname, email);
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password,salt);
         const newUser = new User({
