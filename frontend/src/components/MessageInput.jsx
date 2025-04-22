@@ -76,7 +76,7 @@ const MessageInput = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/messages/asr/voice_to_text",
+        "https://chat-app-1lut.onrender.com/api/messages/asr/voice_to_text",
         { base64 }
       );
 

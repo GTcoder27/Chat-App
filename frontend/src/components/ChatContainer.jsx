@@ -79,7 +79,7 @@ const ChatContainer = () => {
     const handleSpeak = async () => {
 
       try {
-        const res = await axios.post("http://localhost:3000/api/messages/tts/text_to_voice", {
+        const res = await axios.post("https://chat-app-1lut.onrender.com/api/messages/tts/text_to_voice", {
           text: translated,
           user_language,
         });
