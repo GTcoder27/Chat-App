@@ -9,6 +9,9 @@ import { server, app } from "./lib/socket.js"
 import bodyParser from "body-parser";
 import path from "path";
 
+dotenv.config();
+const PORT = process.env.PORT;
+const __dirname = path.resolve();
 
 app.use(express.json({ limit: '50mb' }));
 app.use(bodyParser.json({ limit: '50mb' }));
@@ -17,9 +20,6 @@ app.use('/api/messages/asr/voice_to_text', express.raw({ type: 'audio/*', limit:
 app.use('/api/messages/tts/text_to_voice', express.raw({ limit: '50mb' }));
 
 
-dotenv.config();
-const PORT = process.env.PORT;
-const __dirname = path.resolve();
 
 
 app.use(express.json());
