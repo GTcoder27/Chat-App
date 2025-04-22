@@ -2,12 +2,10 @@ import { generateToken } from "../lib/utils.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs"
 import cloudinary  from "../lib/cloudinary.js";
-// import { auto } from '@cloudinary/url-gen/actions/resize';
-// import { autoGravity } from '@cloudinary/url-gen/qualifiers/gravity';
-// import { AdvancedImage } from '@cloudinary/react';
+
 
 export const signup = async (req,res)=>{
-    const {email,password,fullName:fullname} = req.body;
+    const {email,password,fullName:fullname,language} = req.body;
 
     console.log(req.body);
     try{
@@ -17,18 +15,18 @@ export const signup = async (req,res)=>{
         if(password.length < 6){
             return res.status(400).json({message:"password must be at least 6 characters"});      
         }
-        // console.log("finding");
-        const user = await User.findOne({ email });
-
+        const user = await User.findOne({email});
         if(user) return res.status(400).json({message:"Email already exist"});
+        console.log(fullname, email);
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password,salt);
         const newUser = new User({
             fullname,
             email,
             password:hashedPassword,
+            language,
         });
-        // console.log(newUser);
+        console.log(newUser);
 
         if(newUser){
             generateToken(newUser._id,res);
@@ -48,7 +46,6 @@ export const signup = async (req,res)=>{
         console.log("error in signup contrller",error.message);
         res.status(500).json({message:"Internal Server Error"});
     }
-
 }
 
 export const login = async (req,res)=>{
@@ -72,7 +69,7 @@ export const login = async (req,res)=>{
             profilePic: user.pic,
         });
     } catch(err){
-        console.log("Error in login credentials",err.message);
+        console.log("Error in login credentials",error.message);
         res.status(500).json({message:"Internal Server Error"});
     }
 };
@@ -90,15 +87,22 @@ export const logout = (req,res)=>{
 export const updateProfile = async (req, res) => {
     try{
         // console.log(req.body);
-        const {profilePic} = req.body;
+        const {profilePic ,language } = req.body;
         const userId = req.user._id;
-        if(!profilePic){
-            return res.status(400).json({message:"Please add a profile picture"});
-        }
-        const uploadResponse = await cloudinary.uploader.upload(profilePic);
 
-        const updatedUser = await User.findByIdAndUpdate(userId, 
-            {pic: uploadResponse.secure_url}, {new: true});
+        if(!profilePic && !language){
+            return res.status(400).json({message:"Please add a profile picture & select language"});
+        }
+        let updatedUser = req.user; 
+        if(profilePic != ""){
+            const uploadResponse = await cloudinary.uploader.upload(profilePic);
+            updatedUser = await User.findByIdAndUpdate(userId, 
+                {pic: uploadResponse.secure_url}, {new: true});
+        }
+        if(language != ""){
+            updatedUser = await User.findByIdAndUpdate(userId, 
+                {language: language}, {new: true});
+        }
 
         res.status(200).json(updatedUser);
     }catch(error){

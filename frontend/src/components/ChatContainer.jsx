@@ -1,13 +1,17 @@
 import { useChatStore } from "../store/useChatStore";
-import { useEffect, useRef } from "react";
-
+import { useEffect, useRef, useState } from "react";
+import { axiosInstance } from "../lib/axios.js";
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
 import MessageSkeleton from "./skeletons/MessageSkeleton";
-import {useAuthStore}  from "../store/useAuthStore";
+import { useAuthStore } from "../store/useAuthStore";
 import { formatMessageTime } from "../lib/utils";
+import { Volume2 } from "lucide-react";
+import axios from "axios";
+
 
 const ChatContainer = () => {
+  const [user_language, setuser_language] = useState("en");
   const {
     messages,
     getMessages,
@@ -42,6 +46,71 @@ const ChatContainer = () => {
       </div>
     );
   }
+
+  let text_to_translate;
+  const translate = async (text) => {
+    try {
+      const res = await axiosInstance.post("/messages/translate", {
+        text: text,
+      });
+      setuser_language(res.data.user_language);
+      return res.data.translatedText;
+    } catch (e) {
+      console.error("Translation failed:", e);
+      return null;
+    }
+  };
+
+
+  const TranslatedText = ({ text, targetLang }) => {
+    const [translated, setTranslated] = useState("");
+
+    useEffect(() => {
+      const translateText = async () => {
+        if (text) {
+          const res = await translate(text, targetLang); // assumes translate is imported
+          setTranslated(res);
+        }
+      };
+
+      translateText();
+    }, [text, targetLang]);
+
+    const handleSpeak = async () => {
+
+      try {
+        const res = await axios.post("http://localhost:3000/api/messages/tts/text_to_voice", {
+          text: translated,
+          user_language,
+        });
+        const audioBase64 = res.data.pipelineResponse?.[0].audio?.[0].audioContent
+        if (!audioBase64) return;
+        const audio = new Audio("data:audio/wav;base64," + audioBase64);
+        audio.play();
+      } catch (error) {
+        console.error("Error playing audio:", error);
+      }
+    };
+
+    return (
+      <div>
+        <div className="text-sm">{text}</div>
+        <div className="flex items-center gap-3">
+          <span>{translated}</span>
+          <button onClick={handleSpeak} className="bg-slate-50 ">
+            <Volume2 size={13} className="text-blue-500 hover:text-blue-700" />
+          </button>
+        </div>
+      </div>
+
+    );
+  };
+
+
+
+
+
+
 
   return (
     <div className="flex-1 flex flex-col overflow-auto">
@@ -79,7 +148,7 @@ const ChatContainer = () => {
                   className="sm:max-w-[200px] rounded-md mb-2"
                 />
               )}
-              {message.text && <p>{message.text}</p>}
+              <div>{message.text && <TranslatedText text={message.text} />}</div>
             </div>
           </div>
         ))}

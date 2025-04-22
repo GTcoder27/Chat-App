@@ -1,10 +1,12 @@
 import { useState } from "react";
-import {useAuthStore} from "../store/useAuthStore";
+import { useAuthStore } from "../store/useAuthStore";
 import { Camera, Mail, User } from "lucide-react";
 
 const ProfilePage = () => {
   const { authUser, isUpdatingProfile, updateProfile } = useAuthStore();
   const [selectedImg, setSelectedImg] = useState(null);
+  const [selectedLanguage, setSelectedLanguage] = useState(authUser.language || "en");
+
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
@@ -17,13 +19,13 @@ const ProfilePage = () => {
     reader.onload = async () => {
       const base64Image = reader.result;
       setSelectedImg(base64Image);
-      await updateProfile({ profilePic: base64Image });
+      await updateProfile({ profilePic: base64Image,language: "" });
     };
   };
-  
+
 
   return (
-    <div className="h-screen pt-20">
+    <div className="h-screen pt-10">
       <div className="max-w-2xl mx-auto p-4 py-8">
         <div className="bg-base-300 rounded-xl p-6 space-y-8">
           <div className="text-center">
@@ -83,6 +85,43 @@ const ProfilePage = () => {
               <p className="px-4 py-2.5 bg-base-200 rounded-lg border">{authUser?.email}</p>
             </div>
           </div>
+
+          <div className="space-y-1.5">
+            <div className="text-sm text-zinc-400 flex items-center gap-2">
+              🌐 Preferred Language
+            </div>
+            <select
+              value={selectedLanguage}
+              onChange={async (e) => {
+                const newLang = e.target.value;
+                setSelectedLanguage(newLang);
+                await updateProfile({profilePic: "", language: newLang });
+              }}
+              className="w-full px-4 py-2.5 bg-base-200 rounded-lg border"
+            >
+              <option value="en">English</option>
+              <option value="hi">Hindi</option>
+              <option value="mr">Marathi</option>
+              <option value="gu">Gujarati</option>
+              <option value="pa">Punjabi</option>
+              <option value="bn">Bengali</option>
+              <option value="ta">Tamil</option>
+              <option value="te">Telugu</option>
+              <option value="kn">Kannada</option>
+              <option value="ml">Malayalam</option>
+              <option value="or">Odia</option>
+              <option value="as">Assamese</option>
+              <option value="ur">Urdu</option>
+              <option value="ne">Nepali</option>
+              <option value="sd">Sindhi</option>
+              <option value="kok">Konkani</option>
+              <option value="doi">Dogri</option>
+              <option value="ks">Kashmiri</option>
+              <option value="sat">Santali</option>
+            </select>
+          </div>
+
+
 
           <div className="mt-6 bg-base-300 rounded-xl p-6">
             <h2 className="text-lg font-medium  mb-4">Account Information</h2>

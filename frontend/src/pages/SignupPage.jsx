@@ -1,9 +1,10 @@
 import { useState } from "react";
 import {useAuthStore} from "../store/useAuthStore";
-import { Eye, EyeOff, Loader2, Lock, Mail, MessageSquare, User } from "lucide-react";
+import { Eye, EyeOff, Loader2, Lock, Mail, MessageSquare, User,Globe } from "lucide-react";
 import { Link } from "react-router-dom";
 import AuthImagePattern from "../components/AuthImagePattern";
 import toast from "react-hot-toast";
+
 
 const SignUpPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -11,6 +12,7 @@ const SignUpPage = () => {
     fullName: "",
     email: "",
     password: "",
+    language:"",
   });
 
   const { signup, isSigningUp } = useAuthStore();
@@ -117,6 +119,44 @@ const SignUpPage = () => {
                 </button>
               </div>
             </div>
+
+
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-medium">Language</span>
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Globe className="size-5 text-base-content/40" />
+                </div>
+                <select
+                  className="input input-bordered w-full pl-10 appearance-none"
+                  value={formData.language}
+                  onChange={(e) => setFormData({ ...formData, language: e.target.value })}
+                >
+                  <option value="" disabled>Select language</option>
+                    <option value="hi">Hindi</option>
+                    <option value="mr">Marathi</option>
+                    <option value="gu">Gujarati</option>
+                    <option value="pa">Punjabi</option>
+                    <option value="bn">Bengali</option>
+                    <option value="ta">Tamil</option>
+                    <option value="te">Telugu</option>
+                    <option value="kn">Kannada</option>
+                    <option value="ml">Malayalam</option>
+                    <option value="or">Odia</option>
+                    <option value="as">Assamese</option>
+                    <option value="ur">Urdu</option>
+                    <option value="ne">Nepali</option>
+                    <option value="sd">Sindhi</option>
+                    <option value="kok">Konkani</option>
+                    <option value="doi">Dogri</option>
+                    <option value="ks">Kashmiri</option>
+                    <option value="sat">Santali</option>
+                </select>
+              </div>
+            </div>
+
 
             <button type="submit" className="btn btn-primary w-full" disabled={isSigningUp}>
               {isSigningUp ? (

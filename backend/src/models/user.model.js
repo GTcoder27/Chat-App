@@ -20,6 +20,10 @@ const userSchema = new mongoose.Schema(
             type:String,
             default:"https://www.citypng.com/public/uploads/preview/white-user-member-guest-icon-png-image-701751695037005zdurfaim0y.png"
         },
+        language:{
+            type:String,
+            default:"English",
+        }
     },
     { timestamps : true}
 );
