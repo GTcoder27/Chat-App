@@ -35,14 +35,17 @@ app.use(cors({
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
-if (process.env.NODE_ENV === "production"){
-    console.log(process.env.NODE_ENV);
+if (process.env.NODE_ENV === "production") {
+    console.log("Running in production mode");
+  
+    // Serve static files from the dist directory
     app.use(express.static(path.join(__dirname, "../frontend/dist")));
-
+  
+    // Handle SPA routing, send index.html for any unmatched route
     app.get("*", (req, res) => {
-        res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+      res.sendFile(path.resolve(__dirname, "../frontend/dist/index.html"));
     });
-}
+  }
 
 
 
